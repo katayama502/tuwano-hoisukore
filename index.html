@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="day">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>つわのホイスコーレ｜立ち止まることを、当たり前の文化に。</title>
+  <meta name="description" content="島根県津和野町を舞台にした“試験も成績もない”大人のための学校「つわのホイスコーレ」。自然・対話・暮らしの余白を味わう滞在型プログラムのPRサイトです。">
+  <meta property="og:title" content="つわのホイスコーレ｜立ち止まることを、当たり前の文化に。">
+  <meta property="og:description" content="島根県津和野町で、自然とともに暮らし、語り合い、心ほどける「余白」を味わう大人のための学校。">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Shippori Mincho (Formal Editorial Japanese Serif) + Noto Sans JP (Refined Sans) + Plus Jakarta Sans (Clean Latin) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Shippori+Mincho:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Three.js Import Map -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Scroll Progress Ribbon -->
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Full-viewport Interactive Three.js Background & Hero Diorama Canvas -->
+  <div class="webgl-stage" aria-hidden="true">
+    <canvas id="tsuwanoCanvas"></canvas>
+  </div>
+
+  <!-- Floating Pill Navigation -->
+  <header class="site-header" id="siteHeader">
+    <div class="nav-pill">
+      <a href="#top" class="brand-logo" aria-label="つわのホイスコーレ トップへ">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="17" fill="#3A7D54"/>
+            <circle cx="24" cy="11" r="4" fill="#F4C95D"/>
+            <path d="M5 25C9.5 19.5 14 17.5 18.5 20.5C22.5 23 26.5 19 31 23.5V29C27.5 32.5 23 34.5 18 34.5C12.5 34.5 8 32 5 28V25Z" fill="#7AC08A"/>
+            <path d="M12.5 23L16.5 19L20.5 23H12.5Z" fill="#E06B4F"/>
+            <rect x="14" y="23" width="5" height="4" rx="0.8" fill="#FAF6EE"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-jp">つわのホイスコーレ</span>
+          <span class="brand-en">Tsuwano Højskole</span>
+        </span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="メインナビゲーション">
+        <a href="#about" class="nav-link">ホイスコーレとは</a>
+        <a href="#rhythm" class="nav-link">4つのじかん</a>
+        <a href="#spring-report" class="nav-link">'26春レポート</a>
+        <a href="#voices" class="nav-link">参加者の声</a>
+        <a href="#team" class="nav-link">運営チーム</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="mood-toggle" id="moodToggle" aria-label="昼と焚き火の夜モードを切り替え" aria-pressed="false">
+          <span class="mood-icon mood-icon--day" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+            </svg>
+          </span>
+          <span class="mood-icon mood-icon--night" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+          </span>
+          <span class="mood-label" id="moodLabel">たきびの夜へ</span>
+        </button>
+
+        <a href="#connect" class="btn btn--primary btn--sm nav-cta">参加・SNS</a>
+
+        <button type="button" class="menu-toggle" id="menuToggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileDrawer">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer" hidden>
+      <nav class="mobile-nav" aria-label="モバイルナビゲーション">
+        <a href="#about" class="mobile-link">ホイスコーレとは</a>
+        <a href="#rhythm" class="mobile-link">つわのの1日・4つのじかん</a>
+        <a href="#spring-report" class="mobile-link">つわのホイスコーレ'26春 レポート</a>
+        <a href="#voices" class="mobile-link">参加者の声</a>
+        <a href="#checkin" class="mobile-link">今の気持ちチェックイン</a>
+        <a href="#team" class="mobile-link">運営チーム「雨と歌とラタトゥイユ」</a>
+        <a href="#connect" class="btn btn--primary mobile-cta">Instagram・最新情報を見る</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-badges reveal-up">
+            <span class="pill-badge pill-badge--sun">
+              <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+              島根県津和野町 × デンマークの学び舎
+            </span>
+          </div>
+
+          <h1 class="hero-title reveal-up delay-1">
+            <span class="ib">立ち止まることを、</span><br>
+            <span class="ib"><span class="highlight-brush">当たり前の文化に。</span></span>
+          </h1>
+
+          <p class="hero-subtitle reveal-up delay-2">
+            “試験も成績もない” 大人のための学校、<strong class="ib">つわのホイスコーレ</strong>。山あいの小さな城下町・津和野の自然のなかで、いっしょにごはんをつくり、焚き火を囲み、心ほどける<strong class="ib">「余白のじかん」</strong>を分かち合います。
+          </p>
+
+          <div class="hero-actions reveal-up delay-3">
+            <a href="#about" class="btn btn--primary btn--lg">
+              <span>ホイスコーレをのぞく</span>
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/tsuwano_hojskole/" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--lg">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+              <span>Instagramを見る</span>
+            </a>
+          </div>
+
+          <!-- Interactive 3D Diorama Controls -->
+          <div class="diorama-controls reveal-up delay-4" role="group" aria-label="3D箱庭の操作パネル">
+            <span class="diorama-hint">
+              <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              3Dの津和野の箱庭をさわってみてね
+            </span>
+            <div class="diorama-btn-group">
+              <button type="button" class="chip-btn is-active" data-scene-mood="day">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/>
+                </svg>
+                ひるの津和野
+              </button>
+              <button type="button" class="chip-btn" data-scene-mood="night">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                </svg>
+                たきびの夜
+              </button>
+              <button type="button" class="chip-btn chip-btn--pop" id="bounceIslandBtn">
+                <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2a3 3 0 0 0-3 3c0 1.6 1.5 3 3 5 1.5-2 3-3.4 3-5a3 3 0 0 0-3-3Z"/>
+                  <path d="M12 22a3 3 0 0 1-3-3c0-1.6 1.5-3 3-5 1.5 2 3 3.4 3 5a3 3 0 0 1-3 3Z"/>
+                  <path d="M2 12a3 3 0 0 1 3-3c1.6 0 3 1.5 5 3-2 1.5-3.4 3-5 3a3 3 0 0 1-3-3Z"/>
+                  <path d="M22 12a3 3 0 0 0-3-3c-1.6 0-3 1.5-5 3 2 1.5 3.4 3 5 3a3 3 0 0 0 3-3Z"/>
+                </svg>
+                花びらを舞わせる
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Breathing Zone for the 3D Tsuwano Island -->
+        <div class="hero-stage-spacer" id="heroStageTarget" aria-hidden="true">
+          <div class="floating-caption floating-caption--top">
+            <span class="dot-pulse"></span>
+            石州瓦の赤い屋根と緑の山あい
+          </div>
+          <div class="floating-caption floating-caption--bottom">
+            ドラッグ・クリックで動かせるよ
+          </div>
+        </div>
+      </div>
+
+      <a href="#about" class="scroll-cue" aria-label="下にスクロールして続きを読む">
+        <span class="scroll-cue-text">SCROLL</span>
+        <span class="scroll-cue-line"></span>
+      </a>
+    </section>
+
+    <!-- POP MARQUEE RIBBON -->
+    <div class="marquee-band" aria-hidden="true">
+      <div class="marquee-track">
+        <div class="marquee-items">
+          <span class="marquee-item">試験も成績もない学校</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">Hygge（ヒュッゲ）な時間</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">哲学ウォーク</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">みんなでつくる朝ごはん</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">余白を味わう</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">満天の星と焚き火</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">spr!ng* 〜まもなく脱皮！〜</span>
+          <span class="marquee-sep"></span>
+        </div>
+        <div class="marquee-items">
+          <span class="marquee-item">試験も成績もない学校</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">Hygge（ヒュッゲ）な時間</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">哲学ウォーク</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">みんなでつくる朝ごはん</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">余白を味わう</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">満天の星と焚き火</span>
+          <span class="marquee-sep"></span>
+          <span class="marquee-item">spr!ng* 〜まもなく脱皮！〜</span>
+          <span class="marquee-sep"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT SECTION -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <div class="section-head reveal-up">
+          <span class="eyebrow">ABOUT TSUWANO HØJSKOLE</span>
+          <h2 class="section-title">
+            <span class="ib">デンマークの</span><span class="ib">「人生の学校」を、</span><br class="br-pc">
+            <span class="ib">津和野のやさしい</span><span class="ib">暮らしのなかに。</span>
+          </h2>
+          <p class="section-lead">
+            北欧デンマークで180年以上愛されてきた<strong class="ib">「フォルケホイスコーレ」</strong>。テストも評価もなく、年齢や肩書をそっとおろして「これからどう生きたいか」を語り合う学び舎の精神に惹かれ、ここ島根県津和野町で<strong class="ib">「つわのホイスコーレ」</strong>は生まれました。
+          </p>
+        </div>
+
+        <div class="about-layout">
+          <figure class="story-art-card reveal-up">
+            <div class="art-frame">
+              <img src="assets/images/tsuwano-valley.jpg" alt="緑豊かな山あいに石州瓦の赤い屋根と鯉の泳ぐ清流が広がる津和野の風景イラスト" loading="lazy">
+            </div>
+            <figcaption class="art-caption">
+              <span class="art-tag">Shimane, Tsuwano</span>
+              <span>山陰の小京都・津和野。清らかな水と赤い石州瓦が迎えてくれる町</span>
+            </figcaption>
+          </figure>
+
+          <div class="pillars-stack">
+            <article class="pillar-card reveal-up delay-1">
+              <div class="pillar-icon pillar-icon--green" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12Z"/>
+                  <path d="M12 13V7"/>
+                  <path d="m9 10 3-3 3 3"/>
+                </svg>
+              </div>
+              <div class="pillar-body">
+                <span class="pillar-en">01 / NO TESTS, NO GRADES</span>
+                <h3>試験も、成績も、正解もない</h3>
+                <p>知識を詰め込むのではなく、自分の感性や「今ここ」の気持ちに耳を澄ませる時間。肩書を外したフラットな関係で出会えます。</p>
+              </div>
+            </article>
+
+            <article class="pillar-card reveal-up delay-2">
+              <div class="pillar-icon pillar-icon--sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M12 7v5l3 2"/>
+                </svg>
+              </div>
+              <div class="pillar-body">
+                <span class="pillar-en">02 / YOHAKU &amp; SLOW TIME</span>
+                <h3>「何もしない余白」をたいせつに</h3>
+                <p>スケジュールをびっしり埋めないのが、つわのホイスコーレ流。風に吹かれて散歩したり、ぼんやり空を見上げる余白が心をほぐします。</p>
+              </div>
+            </article>
+
+            <article class="pillar-card reveal-up delay-3">
+              <div class="pillar-icon pillar-icon--coral" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                </svg>
+              </div>
+              <div class="pillar-body">
+                <span class="pillar-en">03 / LIVING &amp; HYGGE</span>
+                <h3>暮らしをともにし、対話を重ねる</h3>
+                <p>地元食材を囲む食卓、朝のうた、夜の焚き火。津和野の高校生や地域の人とも交わりながら、あたたかな<strong>Hygge（ヒュッゲ）</strong>を育てます。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE: 4 MOMENTS OF A DAY -->
+    <section class="section rhythm-section" id="rhythm">
+      <div class="container">
+        <div class="section-head section-head--center reveal-up">
+          <span class="eyebrow">A DAY AT TSUWANO</span>
+          <h2 class="section-title">
+            <span class="ib">暮らすように過ごす、</span><span class="ib">4つのじかん</span>
+          </h2>
+          <p class="section-lead">
+            2泊3日や1週間の滞在プログラムで流れる、ゆったりとした1日のリズム。時間帯をクリックして、ホイスコーレの空気を感じてみてください。
+          </p>
+        </div>
+
+        <div class="rhythm-tabs reveal-up" role="tablist" aria-label="つわのホイスコーレの1日">
+          <button type="button" class="rhythm-tab is-active" role="tab" aria-selected="true" aria-controls="panel-morning" id="tab-morning" data-rhythm="morning">
+            <span class="tab-time">MORNING</span>
+            <span class="tab-name">うたと朝ごはん</span>
+          </button>
+          <button type="button" class="rhythm-tab" role="tab" aria-selected="false" aria-controls="panel-noon" id="tab-noon" data-rhythm="noon">
+            <span class="tab-time">AFTERNOON</span>
+            <span class="tab-name">哲学ウォークと余白</span>
+          </button>
+          <button type="button" class="rhythm-tab" role="tab" aria-selected="false" aria-controls="panel-evening" id="tab-evening" data-rhythm="evening">
+            <span class="tab-time">EVENING</span>
+            <span class="tab-name">キッチンと対話</span>
+          </button>
+          <button type="button" class="rhythm-tab" role="tab" aria-selected="false" aria-controls="panel-night" id="tab-night" data-rhythm="night">
+            <span class="tab-time">NIGHT</span>
+            <span class="tab-name">星空と焚き火のHygge</span>
+          </button>
+        </div>
+
+        <div class="rhythm-stage reveal-up">
+          <!-- Panel 1: Morning -->
+          <div class="rhythm-panel is-active" id="panel-morning" role="tabpanel" aria-labelledby="tab-morning">
+            <div class="rhythm-media">
+              <img src="assets/images/morning-table.jpg" alt="木漏れ日の差すキッチンで地元の新鮮な野菜を使って料理と朝ごはんを囲む風景" loading="lazy">
+              <span class="time-badge">07:30 — 10:00</span>
+            </div>
+            <div class="rhythm-info">
+              <span class="rhythm-kicker">MORNING CHECK-IN &amp; SONG</span>
+              <h3><span class="ib">朝のうたと、</span><span class="ib">みんなでつくる食卓</span></h3>
+              <p>
+                決まったメニューを配られるのではなく、「食べたい人たちが自分たちで準備して、いっしょに食べる」朝ごはん。農家さんのとれたて卵や温かいスープを囲むうち、自然と笑顔がこぼれます。
+              </p>
+              <p>
+                そのあとはデンマークの文化にならって、みんなで声を合わせてうたを歌い、今の心とからだのコンディションをそっと分かち合う「チェックイン」から1日がはじまります。
+              </p>
+              <ul class="tag-cloud">
+                <li>みんなで朝ごはん</li>
+                <li>モーニングソング</li>
+                <li>今の気持ちチェックイン</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Panel 2: Afternoon -->
+          <div class="rhythm-panel" id="panel-noon" role="tabpanel" aria-labelledby="tab-noon" hidden>
+            <div class="rhythm-media">
+              <img src="assets/images/spring-walk.jpg" alt="白壁と赤い石州瓦、春の花が咲く津和野の城下町をゆったり歩く風景" loading="lazy">
+              <span class="time-badge">11:00 — 16:00</span>
+            </div>
+            <div class="rhythm-info">
+              <span class="rhythm-kicker">PHILOSOPHY WALK &amp; YOHAKU</span>
+              <h3><span class="ib">五感をひらく「哲学ウォーク」と</span><span class="ib">自由な余白</span></h3>
+              <p>
+                歴史ある白壁の町並みや、澄んだ水が流れる津和野のまちへ。哲学者のことばや自分の問いをポケットに忍ばせて、鳥の声や風の匂いを感じながら思い思いのペースで歩きます。
+              </p>
+              <p>
+                午後のたっぷりとした余白時間は、カフェで読書しても、川辺で昼寝をしても、ジャーナリングや詩づくりに没頭してもOK。自分の「心地よい」を思い出すひとときです。
+              </p>
+              <ul class="tag-cloud">
+                <li>哲学ウォーク</li>
+                <li>五感をひらくまち歩き</li>
+                <li>ジャーナリング・余白時間</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Panel 3: Evening -->
+          <div class="rhythm-panel" id="panel-evening" role="tabpanel" aria-labelledby="tab-evening" hidden>
+            <div class="rhythm-media">
+              <img src="assets/images/tsuwano-valley.jpg" alt="夕陽に包まれる津和野の豊かな自然と地域のつながりの風景" loading="lazy">
+              <span class="time-badge">16:30 — 19:30</span>
+            </div>
+            <div class="rhythm-info">
+              <span class="rhythm-kicker">COMMUNITY KITCHEN &amp; DIALOGUE</span>
+              <h3><span class="ib">地元食材クッキング＆</span><span class="ib">「つわのびと」との対話</span></h3>
+              <p>
+                コミュニティキッチンに集まって、津和野産の旬の野菜や地元食材を使ったラタトゥイユや手料理をみんなでクッキング。津和野の高校生や地域で挑戦する大人たちも交わります。
+              </p>
+              <p>
+                あたたかいごはんを囲んだあとは、ワールドカフェやライフスタイルトーク。いろんな生き方に触れることで、自分の未来の選択肢がふわりと広がっていきます。
+              </p>
+              <ul class="tag-cloud">
+                <li>津和野食材でクッキング</li>
+                <li>高校生・地域の人と交流</li>
+                <li>ワールドカフェ対話</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Panel 4: Night -->
+          <div class="rhythm-panel" id="panel-night" role="tabpanel" aria-labelledby="tab-night" hidden>
+            <div class="rhythm-media">
+              <img src="assets/images/hygge-campfire.jpg" alt="満天の星空の下で焚き火を囲みながら語り合うヒュッゲな夜の風景" loading="lazy">
+              <span class="time-badge">20:00 — 22:30</span>
+            </div>
+            <div class="rhythm-info">
+              <span class="rhythm-kicker">STARRY CAMPFIRE &amp; HYGGE</span>
+              <h3><span class="ib">満天の星と、</span><span class="ib">焚き火を囲むHyggeの夜</span></h3>
+              <p>
+                ゆらめく炎とパチパチと爆ぜる薪の音。マシュマロを焼いてスモアにしたり、やさしい音楽に耳を傾けたりしながら、ただ火を眺める贅沢な夜。
+              </p>
+              <p>
+                不思議な火のぬくもりに包まれると、初対面の緊張もすっとほどけて、「なぜここに来たのか」「ほんとうは今なにを感じているのか」が自然とことばになっていきます。
+              </p>
+              <ul class="tag-cloud">
+                <li>焚き火とスモア</li>
+                <li>満天の星空</li>
+                <li>心ほどけるHygge対話</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2026 SPRING REPORT FEATURE -->
+    <section class="section report-section" id="spring-report">
+      <div class="container">
+        <div class="report-card reveal-up">
+          <div class="report-decor" aria-hidden="true"></div>
+          <div class="report-grid">
+            <div class="report-body">
+              <div class="report-meta">
+                <span class="pill-badge pill-badge--coral">PICKUP REPORT</span>
+                <span class="report-season">2026 Spring Archive</span>
+              </div>
+              <h2 class="report-title">
+                <span class="ib">つわのホイスコーレ'26春</span><br>
+                <span class="report-subtitle-accent ib">【spr!ng* 〜まもなく脱皮！〜】</span>
+              </h2>
+              <p class="report-desc">
+                新しい季節のはじまりに開催された「つわのホイスコーレ'26春」。しまねの関係人口ポータルサイト<strong class="ib">「しまっち！」</strong>では、地元食材を囲んだ交流キッチン、津和野の高校生や地域住民とのあたたかな出会い、感性をひらく余白の時間の様子がたっぷりレポートされています。
+              </p>
+
+              <div class="report-highlights">
+                <div class="highlight-chip">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5"/>
+                  </svg>
+                  地元野菜・猪肉などの交流キッチン
+                </div>
+                <div class="highlight-chip">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5"/>
+                  </svg>
+                  津和野の高校生・地域住民との対話
+                </div>
+                <div class="highlight-chip">
+                  <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5"/>
+                  </svg>
+                  オンライン「北欧ゼミ」も始動
+                </div>
+              </div>
+
+              <div class="report-actions">
+                <a href="https://shi-match.jp/report/tsuwano-hojskole2026spring/" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--lg">
+                  <span>「しまっち！」レポートを読む</span>
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 7h10v10"/>
+                    <path d="M7 17 17 7"/>
+                  </svg>
+                </a>
+                <a href="https://note.com/tsuwanohojskole" target="_blank" rel="noopener noreferrer" class="btn btn--ghost">
+                  公式noteの記録も見る
+                </a>
+              </div>
+            </div>
+
+            <div class="report-visual">
+              <div class="polaroid-stack">
+                <figure class="polaroid polaroid--main">
+                  <img src="assets/images/spring-walk.jpg" alt="春の津和野を歩くつわのホイスコーレ'26春のイメージ" loading="lazy">
+                  <figcaption>spr!ng* 〜まもなく脱皮！〜</figcaption>
+                </figure>
+                <div class="stat-bubble stat-bubble--1">
+                  <span class="stat-num">0</span>
+                  <span class="stat-label">試験・成績</span>
+                </div>
+                <div class="stat-bubble stat-bubble--2">
+                  <span class="stat-num">∞</span>
+                  <span class="stat-label">対話と余白</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTICIPANT VOICES -->
+    <section class="section voices-section" id="voices">
+      <div class="container">
+        <div class="section-head section-head--center reveal-up">
+          <span class="eyebrow">VOICES FROM PARTICIPANTS</span>
+          <h2 class="section-title">
+            <span class="ib">参加した人たちの、</span><span class="ib">やさしい余韻</span>
+          </h2>
+          <p class="section-lead">
+            津和野で「立ち止まる時間」を過ごした参加者から届いた、リアルなことばたち。
+          </p>
+        </div>
+
+        <div class="voices-grid">
+          <blockquote class="voice-card voice-card--mint reveal-up">
+            <div class="quote-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="currentColor">
+                <path d="M10 14c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C14.2 6.8 10 11 10 14zm14 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C28.2 6.8 24 11 24 14z"/>
+              </svg>
+            </div>
+            <p class="voice-text">
+              理性より感性に訴えかけてくるものがありました。津和野の自然や人のあたたかさの中で過ごした体験は、特別な気づきをくれました。
+            </p>
+            <footer class="voice-footer">
+              <span class="voice-dot"></span>
+              <span>'26春 参加者より</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="voice-card voice-card--sun reveal-up delay-1">
+            <div class="quote-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="currentColor">
+                <path d="M10 14c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C14.2 6.8 10 11 10 14zm14 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C28.2 6.8 24 11 24 14z"/>
+              </svg>
+            </div>
+            <p class="voice-text">
+              忙しい毎日の中でも、あえて「余白」の時間をつくることの大切さを痛感しました。毎日をがんばっている社会人や学生の友だちに、ぜひおすすめしたいです。
+            </p>
+            <footer class="voice-footer">
+              <span class="voice-dot"></span>
+              <span>'26春 参加者より</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="voice-card voice-card--coral reveal-up delay-2">
+            <div class="quote-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="currentColor">
+                <path d="M10 14c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C14.2 6.8 10 11 10 14zm14 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C28.2 6.8 24 11 24 14z"/>
+              </svg>
+            </div>
+            <p class="voice-text">
+              最初はただ津和野という場所に惹かれて参加したけれど、気づいたらつわのホイスコーレの空間や対話を心から楽しんでいる自分がいました。
+            </p>
+            <footer class="voice-footer">
+              <span class="voice-dot"></span>
+              <span>'26春 参加者より</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="voice-card voice-card--sky reveal-up delay-3">
+            <div class="quote-mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" fill="currentColor">
+                <path d="M10 14c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C14.2 6.8 10 11 10 14zm14 0c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4v-2c0-4.4 2.6-7.6 6-8.8l-.8-2.2C28.2 6.8 24 11 24 14z"/>
+              </svg>
+            </div>
+            <p class="voice-text">
+              津和野の高校生や地域で挑戦する大人たちとの交流を通して、地域の人たちのつながりの温かさや、津和野愛を肌で感じることができました。
+            </p>
+            <footer class="voice-footer">
+              <span class="voice-dot"></span>
+              <span>'26春 参加者より</span>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE MINI CHECK-IN WIDGET -->
+    <section class="section checkin-section" id="checkin">
+      <div class="container">
+        <div class="checkin-box reveal-up">
+          <div class="checkin-head">
+            <span class="eyebrow">MINI CHECK-IN</span>
+            <h2 class="section-title">
+              <span class="ib">ちょっと一息。</span><span class="ib">いま、どんな気持ち？</span>
+            </h2>
+            <p class="section-lead">
+              ホイスコーレの朝みたいに、いまの気分をひとつ選んでみてください。津和野からのちいさなことばをお届けします。
+            </p>
+          </div>
+
+          <div class="checkin-choices" role="group" aria-label="いまの気持ちを選ぶ">
+            <button type="button" class="mood-pill" data-checkin="pause">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+              </svg>
+              ちょっと立ち止まりたい
+            </button>
+            <button type="button" class="mood-pill" data-checkin="nature">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+              自然の中で深呼吸したい
+            </button>
+            <button type="button" class="mood-pill" data-checkin="talk">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+              </svg>
+              誰かとゆっくり話したい
+            </button>
+            <button type="button" class="mood-pill" data-checkin="spark">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+              </svg>
+              新しい問いに出会いたい
+            </button>
+          </div>
+
+          <div class="checkin-response" id="checkinResponse" aria-live="polite">
+            <div class="response-badge" id="responseBadge">TSUWANO NOTE</div>
+            <p class="response-text" id="responseText">
+              上のボタンから、いまの気分をそっと押してみてくださいね。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORGANIZER TEAM SECTION -->
+    <section class="section team-section" id="team">
+      <div class="container">
+        <div class="team-grid">
+          <div class="team-copy reveal-up">
+            <span class="eyebrow">ORGANIZER TEAM</span>
+            <h2 class="section-title">
+              <span class="ib">運営チーム</span><br>
+              <span class="ib">「雨と歌とラタトゥイユ」</span>
+            </h2>
+            <p class="team-story">
+              津和野町で「フォルケホイスコーレをやりたい！」という想いを持った若者たちが集まり、2022年6月に生まれたチームです。
+            </p>
+            <p class="team-story">
+              はじめてみんなで顔を合わせて作戦会議をした日。鍋いっぱいに作ったあたたかな<strong>ラタトゥイユ</strong>を囲み、自然と<strong>歌</strong>をうたい、窓の外に<strong>雨</strong>が降ってきた――そんなはじまりの日の情景が、そのままチームの名前になりました。
+            </p>
+
+            <div class="activity-list">
+              <div class="activity-item">
+                <span class="activity-dot activity-dot--green"></span>
+                <div>
+                  <strong>つわのホイスコーレ（滞在型プログラム）</strong>
+                  <p>春や夏を中心に、津和野町で2泊3日〜1週間ほど暮らすように過ごす学びの場。</p>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-dot activity-dot--sun"></span>
+                <div>
+                  <strong>歩くフォルケ</strong>
+                  <p>津和野を飛び出して、全国のさまざまな土地を訪ねて対話の場を共につくるプロジェクト。</p>
+                </div>
+              </div>
+              <div class="activity-item">
+                <span class="activity-dot activity-dot--coral"></span>
+                <div>
+                  <strong>つわのホイスコーレ北欧ゼミ・夜カフェ</strong>
+                  <p>オンラインから気軽に参加できる、北欧の教育・暮らしの読書会や対話コミュニティ。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-visual reveal-up delay-1">
+            <div class="team-art-wrap">
+              <img src="assets/images/hygge-campfire.jpg" alt="雨と歌とラタトゥイユの温かいコミュニティと焚き火の風景" loading="lazy">
+              <div class="team-sticker">
+                <span class="sticker-since">SINCE 2022.06</span>
+                <span class="sticker-words">Rain · Song · Ratatouille</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA & CONNECT SECTION -->
+    <section class="section cta-section" id="connect">
+      <div class="container">
+        <div class="cta-banner reveal-up">
+          <div class="cta-shapes" aria-hidden="true">
+            <span class="cta-blob cta-blob--1"></span>
+            <span class="cta-blob cta-blob--2"></span>
+          </div>
+          <span class="eyebrow eyebrow--light">JOIN THE NEXT YOHAKU</span>
+          <h2 class="cta-title">
+            <span class="ib">つぎの余白で、</span><span class="ib">会いましょう。</span>
+          </h2>
+          <p class="cta-desc">
+            次回の滞在プログラム募集や「北欧ゼミ」「歩くフォルケ」の最新情報は、公式Instagramやnoteでゆるやかにお届けしています。まずは気軽にフォローしてのぞいてみてくださいね。
+          </p>
+
+          <div class="cta-links">
+            <a href="https://www.instagram.com/tsuwano_hojskole/" target="_blank" rel="noopener noreferrer" class="btn btn--sun btn--lg">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              </svg>
+              <span>Instagram @tsuwano_hojskole</span>
+            </a>
+
+            <a href="https://shi-match.jp/report/tsuwano-hojskole2026spring/" target="_blank" rel="noopener noreferrer" class="btn btn--glass btn--lg">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>
+              </svg>
+              <span>'26春レポート（しまっち！）</span>
+            </a>
+
+            <a href="https://note.com/tsuwanohojskole" target="_blank" rel="noopener noreferrer" class="btn btn--glass btn--lg">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9"/>
+                <path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/>
+              </svg>
+              <span>公式 note</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#top" class="brand-logo">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="18" cy="18" r="17" fill="#3A7D54"/>
+              <circle cx="24" cy="11" r="4" fill="#F4C95D"/>
+              <path d="M5 25C9.5 19.5 14 17.5 18.5 20.5C22.5 23 26.5 19 31 23.5V29C27.5 32.5 23 34.5 18 34.5C12.5 34.5 8 32 5 28V25Z" fill="#7AC08A"/>
+              <path d="M12.5 23L16.5 19L20.5 23H12.5Z" fill="#E06B4F"/>
+              <rect x="14" y="23" width="5" height="4" rx="0.8" fill="#FAF6EE"/>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <span class="brand-jp">つわのホイスコーレ</span>
+            <span class="brand-en">Tsuwano Højskole — Shimane, Japan</span>
+          </span>
+        </a>
+        <p class="footer-note">
+          島根県鹿足郡津和野町を拠点に活動する「雨と歌とラタトゥイユ」による大人のための学校プロジェクト。
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#about">ホイスコーレとは</a>
+        <a href="#rhythm">4つのじかん</a>
+        <a href="#spring-report">'26春レポート</a>
+        <a href="#voices">参加者の声</a>
+        <a href="#team">運営チーム</a>
+      </div>
+
+      <button type="button" class="back-top-btn" id="backTopBtn" aria-label="ページの先頭へ戻る">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m18 15-6-6-6 6"/>
+        </svg>
+      </button>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; つわのホイスコーレ / 雨と歌とラタトゥイユ PR Concept Site</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
